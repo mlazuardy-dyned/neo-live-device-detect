@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h2 class="tes"></h2>
+    <button onclick="openApp()">Click This links</button>
+    <span>mna://live<span class="tesss"></span></span>
+    <!-- <br>
+    <a href="#" onclick="return newOpen()">local3</a><br/> 
+    <div id="di"></div> 
+    <div style="display:none;" id="ifc"></div> -->
+</body>
+<script>
+var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
+    IS_IPHONE = !IS_IPAD && ((navigator.userAgent.match(/iPhone/i) != null) || (navigator.userAgent.match(/iPod/i) != null)),
+    IS_IOS = IS_IPAD || IS_IPHONE,
+    IS_ANDROID = !IS_IOS && navigator.userAgent.match(/android/i) != null,
+    IS_MOBILE = IS_IOS || IS_ANDROID;
+
+document.querySelector('.tesss').innerHTML = window.location.search
+/**
+ *  Open app by check the operating system of user
+ * 
+ * @return void
+ */
+
+// function test2(){
+//     var di = document.getElementById("di");
+//     di.innerHTML = "app have not installed";
+// }
+
+// function newOpen(){//184 064 323 438
+//     var di = document.getElementById("di");
+//     di.innerHTML = "app have installed";
+//     window.location = `mna://live${window.location.search}`;
+//     var ifc = document.getElementById("ifc");
+//     ifc.innerHTML = "<iframe src='mna://live?sso_token=b&iswebview=false' onload='test2()'></iframe>";
+//     return false;
+// }
+
+function isWebview(){
+    var url = new URL(window.location.href);
+    return JSON.parse(url.searchParams.get('iswebview'));
+}
+
+function sendMessage() {
+    if(IS_IOS){
+        window.webkit.messageHandlers.myOwnJSHandler.postMessage("Hello iOS!");
+    }
+    if(IS_ANDROID){
+        myOwnJSHandler.receiveMessageFromJS("Hello Android!");
+    } 
+}
+
+function openApp(){
+
+    if(isWebview()){
+        if(!IS_MOBILE){
+            return;
+        }
+        sendMessage();
+    } else {
+        window.location = `mna://live${window.location.search}`;
+
+        setTimeout(function() {
+            // if(!document.webkitHidden){
+                if(IS_IOS){
+                    window.location = "https://itunes.apple.com/us/app/myneo/id1382097493?ls=1&mt=8";
+                } 
+                if(IS_ANDROID){
+                    window.location = "https://play.google.com/store/apps/details?id=com.dyned.myneoapp";
+                }
+            // }
+
+        },25);
+        
+        return false;
+    }
+}
+
+function isRunningStandAlone(){
+    return (matchMedia('(display-mode: standalone)').matches);
+}
+/**
+ * Determine the mobile operating system.
+ * This function returns one of 'iOS', 'Android', 'Windows Phone', or 'unknown'.
+ *
+ * @return {String}
+ */
+ function getMobileOperatingSystem() {
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+    }
+
+    if (/android/i.test(userAgent)) {
+        return "Android";
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+    }
+
+    return "unknown";
+}
+
+document.querySelector('.tes').innerHTML = getMobileOperatingSystem();
+</script>
+</html>
